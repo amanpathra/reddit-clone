@@ -1,0 +1,51 @@
+.feed{
+    display: flex;
+    justify-content: center;
+}
+
+.feed-box{
+    margin: 25px;
+    width: 60%;
+    /* background-color: rgba(238, 130, 238, 0.456); */
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.feed-sort{
+    display: flex;
+    background-color: white;
+    padding: 12px;
+    gap: 20px;
+    border-radius: 5px;
+}
+
+.feed-sort-btn{
+    display: flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: none;
+    outline: none;
+    color: rgb(79, 79, 79);
+    background-color: transparent;
+}
+
+.feed-sort-btn span{
+    font-weight: 500;
+    pointer-events: none;
+}
+
+
+.feed-sort-btn:hover{
+    background-color: rgb(224, 239, 239);
+}
+
+.feed-sort-btn-active{
+    color: dodgerblue;
+}
+
+.feed-sort-btn svg{
+    margin-right: 5px;
+    pointer-events: none;
+}
