@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: start;
+    justify-content: flex-start;
     gap: 5px;
 }
 
@@ -27,7 +27,7 @@
 .feed-post-main{
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     gap: 8px;
 }
 

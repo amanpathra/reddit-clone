@@ -24,7 +24,7 @@ router.post('/submit',
             })
 
             const savePost = await post.save();
-            res.json(savePost);
+            return res.json(savePost);
             
         } catch (error) {
             console.log(error)
@@ -37,10 +37,24 @@ router.post('/submit',
 router.get('/fetchAllPosts', async (req, res) => {
     try {
         const notes = await Post.find({});
-        res.json(notes);
+        return res.json(notes);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Internal server error');
+        return res.status(500).send('Internal server error');
+    }
+})
+
+router.put('/vote', async (req, res) => {
+    try {
+        if (req.body.vote === 'up'){
+            const post = await Post.findByIdAndUpdate(req.body.postId, { $inc: { likes: req.body.increment } }, { new: true });
+            return res.send(post);
+        } else if (req.body.vote === 'down'){
+            const post = await Post.findByIdAndUpdate(req.body.postId, { $inc: { likes: req.body.decrement } }, { new: true });
+            return res.send(post);
+        }
+    } catch (error) {
+        console.log(error)
     }
 })
 

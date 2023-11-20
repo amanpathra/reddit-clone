@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Nav from './components/Nav';
 import Feed from './components/Feed';
 import SideBar from './components/SideBar';
@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 function App() {
 
     const navigate = useNavigate();
-    const { user, posts } = useSelector(state => state.app);
+    const { user } = useSelector(state => state.app);
 
     useEffect(() => {
         if (!user) {
@@ -23,8 +23,8 @@ function App() {
         }else{
             navigate('/')
         }
-    }, [])
-
+    }, [user, navigate])
+    
     return (
         <div className="App">
             {user ? (
@@ -35,7 +35,7 @@ function App() {
                             <Route exact path='/' element={<Feed />} />
                             <Route exact path='/submit' element={<Submit />} />
                         </Routes>
-                        <SideBar />
+                        <SideBar/>
                     </div>
                 </>
             ) : (

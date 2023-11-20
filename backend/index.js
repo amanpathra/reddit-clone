@@ -18,7 +18,6 @@ app.use('/api/auth', auth)
 app.use('/api/post', post)
 
 
-
 app.listen(port, () => {
     console.log(`reddit app listening on  http://localhost:${port}`);
 })

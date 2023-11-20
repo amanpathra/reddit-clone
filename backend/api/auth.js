@@ -47,7 +47,7 @@ router.post('/signup',
             
             success = true
             const authToken = jwt.sign(data, JWT_SECRET);
-            res.json({authToken, success})
+            return res.json({authToken, success});
             
         } catch (error) {
             console.log(error)
@@ -56,7 +56,7 @@ router.post('/signup',
 );
 
 
-router.post('/login', 
+router.post('/login',
 
     [body('username', 'Please choose a valid username.').isLength({ min: 3 }),
     body('password', 'Password must be atlease 6 characters long.').isLength({ min: 6 })],
@@ -69,27 +69,27 @@ router.post('/login',
         if(!errors.isEmpty()){
             return res.status(400).json({errors: errors.array(), success})
         }
-
+        
         const {username, password} = req.body;
         try {
             const user = await User.findOne({username});
             if(!user){
                 return res.status(400).json({error: 'Please try to login with correct credentials.', success})
             }
-
+            
             const isMatched = await bcrypt.compare(password, user.password);
             if(!isMatched) return res.status(400).json({error: 'Please try to login with correct credentials.', success})
-
+            
             const data = {
                 user: {
                     id: user.id
                 }
             }
-
+            
             success = true;
             const authToken = jwt.sign(data, JWT_SECRET);
-            res.json({ authToken, success });
-            
+            return res.json({ authToken, success });
+
         } catch (error) {
             console.log(error)
         }
@@ -97,14 +97,39 @@ router.post('/login',
     
 )
 
-router.get('/getUser/:id', async (req, res) => {
+router.get('/getUser', fetchuser, async (req, res) => {
     try {
-        let userId = req.params.id;
-        const user = await User.findById(userId).select("-password");
-        res.json(user);
+        if (req.header("get") === 'userWhoPosted'){
+            let userId = req.header("id");
+            const user = await User.findById(userId).select("username");
+            return res.json(user);
+        } else if (req.header("get") === 'loggedInUser'){
+            const user = await User.findById(req.user.id).select("likedPosts dislikedPosts");
+            return res.json(user)
+        }
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Internal server error');
+        return res.status(500).send('Internal server error');
+    }
+})
+
+router.put('/updateUser', fetchuser, async (req, res) => {
+    try {
+        if (req.header("vote") === 'up' && req.header("isPostLiked") === false) {
+            const user = await User.findByIdAndUpdate(req.user.id, { $push: { likedPosts: req.body.postId} }, { new: true })
+            return res.json(user);
+        } else if (req.header("vote") === 'up' && req.header("isPostLiked") === true) {
+            const user = await User.findByIdAndUpdate(req.user.id, { $pull: { likedPosts: req.body.postId} }, { new: true })
+            return res.json(user);
+        } else if (req.header("vote") === 'down' && req.header("isPostDisliked") === false) {
+            const user = await User.findByIdAndUpdate(req.user.id, { $push: { dislikedPosts: req.body.postId} }, { new: true })
+            return res.json(user);
+        } else {
+            const user = await User.findByIdAndUpdate(req.user.id, { $pull: { dislikedPosts: req.body.postId} }, { new: true })
+            return res.json(user);
+        }
+    } catch (error) {
+        console.log(error)
     }
 })
 

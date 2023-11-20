@@ -27,8 +27,8 @@ const Login = () => {
         const data = await res.json();
 
         if(data.success){
-            dispatch(setUser({user: data.authToken}))
-            navigate('/')
+            dispatch(setUser({user: data.authToken}));
+            navigate('/');
         }
     }
     

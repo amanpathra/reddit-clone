@@ -21,6 +21,14 @@ const UserSchema = new Schema({
     },
     image: {
         type: String
+    },
+    likedPosts: {
+        type: Array,
+        default: []
+    },
+    dislikedPosts: {
+        type: Array,
+        default: []
     }
 })
 
