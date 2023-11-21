@@ -13,8 +13,7 @@ const FeedPost = ({ post, idx, userLikedPosts }) => {
 
     const [username, setUsername] = useState('');
     const [postLikes, setPostLikes] = useState(post.likes);
-    const [isPostLiked, setIsPostLiked] = useState(false);
-    const [isPostDisliked, setIsPostDisliked] = useState(false);
+    const [isPostVoted, setIsPostVoted] = useState(0);
 
     const { user } = useSelector(state => state.app);
 
@@ -31,67 +30,67 @@ const FeedPost = ({ post, idx, userLikedPosts }) => {
             })
             const data = await res.json();
             setUsername(data.username);
-
-            setIsPostLiked(userLikedPosts?.likedPosts.includes(post._id));
-            setIsPostDisliked(userLikedPosts?.dislikedPosts.includes(post._id));
+            setIsPostVoted(userLikedPosts?.likedPosts.includes(post._id) ? 1 : userLikedPosts?.dislikedPosts.includes(post._id) ? -1 : 0);
         })();
-    }, [userLikedPosts])
+    }, [userLikedPosts, post._id, post.user, user])
 
 
     const handleVote = async (vote) => {
+        let crement;
         switch (vote) {
             case 'up':
-                let increment = isPostLiked ? -1 : 1;
-                const postt = await fetch('http://localhost:5000/api/post/vote', {
+                crement = isPostVoted === -1 ? 2 : isPostVoted === 0 ? 1 : -1;
+                
+                await fetch('http://localhost:5000/api/post/vote', {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({postId: post._id, increment, vote})
+                    body: JSON.stringify({postId: post._id, crement, vote})
                 })
 
-                setPostLikes(isPostLiked ? (postLikes - 1) : (postLikes + 1));
-
-                const res = await fetch(`http://localhost:5000/api/auth/updateUser`, {
+                setPostLikes((prevPostLikes) => prevPostLikes + crement);
+                
+                await fetch(`http://localhost:5000/api/auth/updateUser`, {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json",
                         "auth-token": user,
-                        "isPostLiked": isPostLiked,
+                        "isPostVoted": isPostVoted,
                         "vote": vote
                     },
                     body: JSON.stringify({ postId: post._id })
                 })
-
-                setIsPostLiked(isPostLiked ? false : true)
+                setIsPostVoted(crement === -1 ? 0 : 1)
                 break;
 
             case 'down':
-                let decrement = isPostDisliked ? 1 : -1;
-                const posttt = await fetch('http://localhost:5000/api/post/vote', {
+                crement = isPostVoted === -1 ? 1 : isPostVoted === 0 ? -1 : -2;
+
+                await fetch('http://localhost:5000/api/post/vote', {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({postId: post._id, decrement, vote})
+                    body: JSON.stringify({postId: post._id, crement, vote})
                 })
 
-                setPostLikes(isPostDisliked ? (postLikes + 1) : (postLikes - 1));
-
-                const ress = await fetch(`http://localhost:5000/api/auth/updateUser`, {
+                setPostLikes((prevPostLikes) => prevPostLikes + crement);
+                
+                await fetch(`http://localhost:5000/api/auth/updateUser`, {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json",
                         "auth-token": user,
-                        "isPostDisliked": isPostDisliked,
+                        "isPostVoted": isPostVoted,
                         "vote": vote
                     },
                     body: JSON.stringify({ postId: post._id })
                 })
 
-                setIsPostDisliked(isPostDisliked ? false : true)
+                setIsPostVoted(crement === 1 ? 0 : -1)
                 break;
-        
+
             default:
                 break;
         }
@@ -100,9 +99,17 @@ const FeedPost = ({ post, idx, userLikedPosts }) => {
     return (
         <div className="feed-post">
             <div className="feed-post-votes">
-                <BiSolidUpvote size={24} style={{ color: isPostLiked?'#ff4500':'#d0d0d0' }} onClick={() => handleVote('up')}/>
+                <BiSolidUpvote
+                    size={24}
+                    style={{ color: isPostVoted === 1 ? '#ff4500' : '#d0d0d0' }}
+                    onClick={() => handleVote('up')}
+                />
                 <span>{postLikes}</span>
-                <BiSolidDownvote size={24} style={{ color: isPostDisliked ? '#7193ff' : '#d0d0d0' }} onClick={() => handleVote('down')}/>
+                <BiSolidDownvote
+                    size={24}
+                    style={{ color: isPostVoted === -1 ? '#7193ff' : '#d0d0d0' }}
+                    onClick={() => handleVote('down')}
+                />
             </div>
             <div className="feed-post-main">
                 <div className="feed-post-head">

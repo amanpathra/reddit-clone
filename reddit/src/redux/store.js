@@ -12,7 +12,11 @@ const appSlice = createSlice({
             state.user = action.payload.user
         },
         setPosts: (state, action) => {
-            state.posts.unshift(action.payload.post)
+            if (action.payload === null){
+                state.posts = [];
+                return;
+            }
+            state.posts.unshift(action.payload.post);
         }
     }
 })

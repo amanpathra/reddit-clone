@@ -95,4 +95,4 @@ const Submit = () => {
     )
 }
 
-export default Submit
+export default Submit;

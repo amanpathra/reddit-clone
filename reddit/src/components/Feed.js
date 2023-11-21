@@ -15,25 +15,24 @@ const Feed = () => {
 
     const { user } = useSelector(state => state.app)
 
-    useEffect(() => {
-        (async () => {
-            const res = await fetch('http://localhost:5000/api/post/fetchAllPosts');
-            const data = await res.json();
-            data.forEach(post => {
-                dispatch(setPosts({post}))
-            })
+    useEffect(async () => {
+        const res = await fetch('http://localhost:5000/api/post/fetchAllPosts');
+        const data = await res.json();
+        dispatch(setPosts(null))
+        data.forEach(post => {
+            dispatch(setPosts({post}))
+        })
 
-            const checkForPostLiked = await fetch('http://localhost:5000/api/auth/getUser', {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                    "auth-token": user,
-                    "get": 'loggedInUser'
-                }
-            })
-            const loggedUserLikedPosts = await checkForPostLiked.json();
-            setUserLikedPost(loggedUserLikedPosts)
-        })();
+        const checkForPostLiked = await fetch('http://localhost:5000/api/auth/getUser', {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": user,
+                "get": 'loggedInUser'
+            }
+        })
+        const loggedUserLikedPosts = await checkForPostLiked.json();
+        setUserLikedPost(loggedUserLikedPosts);
 
     }, [])
 
@@ -43,7 +42,6 @@ const Feed = () => {
     }
 
     const { posts } = useSelector(state => state.app);
-    console.log(posts)
 
     return (
         <div className='feed'>

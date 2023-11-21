@@ -13,6 +13,7 @@ router.post('/submit',
     fetchuser,
 
     async (req, res) => {
+        console.log('yomyom')
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
@@ -36,7 +37,8 @@ router.post('/submit',
 
 router.get('/fetchAllPosts', async (req, res) => {
     try {
-        const notes = await Post.find({});
+        const notes = await Post.find({}).select('_id');
+        console.log(notes)
         return res.json(notes);
     } catch (error) {
         console.error(error.message);
@@ -47,11 +49,11 @@ router.get('/fetchAllPosts', async (req, res) => {
 router.put('/vote', async (req, res) => {
     try {
         if (req.body.vote === 'up'){
-            const post = await Post.findByIdAndUpdate(req.body.postId, { $inc: { likes: req.body.increment } }, { new: true });
-            return res.send(post);
+            const post = await Post.findByIdAndUpdate(req.body.postId, { $inc: { likes: req.body.crement } }, { new: true });
+            return res.json(post);
         } else if (req.body.vote === 'down'){
-            const post = await Post.findByIdAndUpdate(req.body.postId, { $inc: { likes: req.body.decrement } }, { new: true });
-            return res.send(post);
+            const post = await Post.findByIdAndUpdate(req.body.postId, { $inc: { likes: req.body.crement } }, { new: true });
+            return res.json(post);
         }
     } catch (error) {
         console.log(error)

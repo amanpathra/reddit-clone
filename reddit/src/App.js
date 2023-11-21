@@ -18,11 +18,7 @@ function App() {
     const { user } = useSelector(state => state.app);
 
     useEffect(() => {
-        if (!user) {
-            navigate('/login')
-        }else{
-            navigate('/')
-        }
+        if (!user) navigate('/login');
     }, [user, navigate])
     
     return (
