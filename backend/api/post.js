@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Post from '../models/Post.js';
+import User from '../models/User.js';
 import fetchuser from '../fetchuser.js'
 
 const router = express.Router();
@@ -13,7 +14,6 @@ router.post('/submit',
     fetchuser,
 
     async (req, res) => {
-        console.log('yomyom')
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
@@ -38,11 +38,22 @@ router.post('/submit',
 router.get('/fetchAllPosts', async (req, res) => {
     try {
         const notes = await Post.find({}).select('_id');
-        console.log(notes)
         return res.json(notes);
     } catch (error) {
         console.error(error.message);
         return res.status(500).send('Internal server error');
+    }
+})
+
+router.get('/getPost', async (req, res) => {
+    try {
+        const post = await Post.findById(req.headers.id);
+        const user = await User.findById(post.user).select('username');
+        let postt = post.toObject();
+        postt.username = user.username;
+        return res.json(postt);
+    } catch (error) {
+        console.log(error)
     }
 })
 

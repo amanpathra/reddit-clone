@@ -1,0 +1,130 @@
+.post{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+}
+
+.post::-webkit-scrollbar{
+    width: 5px;
+}
+
+.post::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.post::-webkit-scrollbar-thumb {
+  background: #c6c6c6;
+  border-radius: 99px;
+}
+
+.post::-webkit-scrollbar-thumb:hover {
+  background: #939393;
+}
+
+.post-box{
+    margin-top: 25px;
+    width: 60%;
+    height: fit-content;
+}
+
+.post-comment{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 15px;
+    border-top: 5px solid #e6e6e6;
+}
+
+.post-comment>h3{
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #565656;
+    margin-bottom: 20px;
+}
+
+.comment-input-box{
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #bebebe;
+    margin-bottom: 20px;
+}
+
+.comment-input-box textarea{
+    resize: vertical;
+    outline: none;
+    border: none;
+    padding: 10px;
+}
+
+.comment-post{
+    background-color: #f0f0f0;
+    display: flex;
+    padding: 8px 8px;
+    column-gap: 10px;
+}
+
+.comment-post>button{
+    padding: 6px 10px;
+    border: none;
+    outline: none;
+    background-color: #dfdfdf;
+    border-radius: 99px;
+}
+
+.comment-submit-btn{
+    margin-left: auto;
+    color: white;
+    background-color: #ff4500 !important;
+}
+
+.comment-section{
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-sort{
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding: 12px;
+    gap: 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.comment-sort-btn{
+    display: flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: none;
+    outline: none;
+    color: rgb(79, 79, 79);
+    background-color: transparent;
+}
+
+.comment-sort-btn span{
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.comment-sort-btn:hover{
+    background-color: rgb(224, 239, 239);
+}
+
+.comment-sort-btn-active{
+    color: dodgerblue;
+}
+
+.comment-sort-btn svg{
+    margin-right: 5px;
+    pointer-events: none;
+}
+
+.comments{
+    display: flex;
+    flex-direction: column;
+}

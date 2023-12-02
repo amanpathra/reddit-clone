@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { setUser, updatePostVotes, setFocusedPost } from '../redux/store';
+
 
 import { BiSolidDownvote, BiSolidUpvote } from 'react-icons/bi';
 import { GoComment } from 'react-icons/go'
@@ -9,57 +13,59 @@ import { PiBookmarkSimpleFill } from 'react-icons/pi'
 import userImg from '../assets/user.png'
 import '../styles/FeedPost.css'
 
-const FeedPost = ({ post, idx, userLikedPosts }) => {
+const FeedPost = ({ postId, alone }) => {
 
-    const [username, setUsername] = useState('');
-    const [postLikes, setPostLikes] = useState(post.likes);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [post, setPost] = useState(null);
     const [isPostVoted, setIsPostVoted] = useState(0);
 
     const { user } = useSelector(state => state.app);
 
     useEffect(() => {
         (async () => {
-            const res = await fetch('http://localhost:5000/api/auth/getUser', {
+            const res = await fetch('http://localhost:5000/api/post/getPost', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": user,
-                    "id": post.user,
-                    "get": 'userWhoPosted'
+                    "id": postId
                 }
             })
-            const data = await res.json();
-            setUsername(data.username);
-            setIsPostVoted(userLikedPosts?.likedPosts.includes(post._id) ? 1 : userLikedPosts?.dislikedPosts.includes(post._id) ? -1 : 0);
-        })();
-    }, [userLikedPosts, post._id, post.user, user])
+            const restData = await res.json();
+            setPost(restData);
 
+            setIsPostVoted(user.userData?.likedPosts.includes(postId) ? 1 : user.userData?.dislikedPosts.includes(postId) ? -1 : 0);
+        })();
+    }, [postId, user])
 
     const handleVote = async (vote) => {
         let crement;
         switch (vote) {
             case 'up':
                 crement = isPostVoted === -1 ? 2 : isPostVoted === 0 ? 1 : -1;
-                
+
+                dispatch(updatePostVotes({ crement, postId }));
+                dispatch(setUser({ set: vote, postId, isPostVoted }))
+                setPost({ ...post, likes: post.likes + crement });
+
                 await fetch('http://localhost:5000/api/post/vote', {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({postId: post._id, crement, vote})
+                    body: JSON.stringify({ postId, crement, vote })
                 })
 
-                setPostLikes((prevPostLikes) => prevPostLikes + crement);
-                
                 await fetch(`http://localhost:5000/api/auth/updateUser`, {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json",
-                        "auth-token": user,
+                        "auth-token": user.token,
                         "isPostVoted": isPostVoted,
                         "vote": vote
                     },
-                    body: JSON.stringify({ postId: post._id })
+                    body: JSON.stringify({ postId })
                 })
                 setIsPostVoted(crement === -1 ? 0 : 1)
                 break;
@@ -67,25 +73,27 @@ const FeedPost = ({ post, idx, userLikedPosts }) => {
             case 'down':
                 crement = isPostVoted === -1 ? 1 : isPostVoted === 0 ? -1 : -2;
 
+                dispatch(updatePostVotes({ crement, postId }))
+                dispatch(setUser({ set: vote, postId, isPostVoted }))
+                setPost({ ...post, likes: post.likes + crement })
+
                 await fetch('http://localhost:5000/api/post/vote', {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({postId: post._id, crement, vote})
+                    body: JSON.stringify({ postId, crement, vote })
                 })
 
-                setPostLikes((prevPostLikes) => prevPostLikes + crement);
-                
                 await fetch(`http://localhost:5000/api/auth/updateUser`, {
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json",
-                        "auth-token": user,
+                        "auth-token": user.token,
                         "isPostVoted": isPostVoted,
                         "vote": vote
                     },
-                    body: JSON.stringify({ postId: post._id })
+                    body: JSON.stringify({ postId })
                 })
 
                 setIsPostVoted(crement === 1 ? 0 : -1)
@@ -95,37 +103,42 @@ const FeedPost = ({ post, idx, userLikedPosts }) => {
                 break;
         }
     }
-    
+
+    const handlePostClick = () => {
+        dispatch(setFocusedPost({type: 'SET_ID', id: postId}))
+        navigate(`/post/${postId}`)
+    }
+
     return (
-        <div className="feed-post">
+        <div className={`feed-post${!alone?' round-corner':''}`} onClick={handlePostClick}>
             <div className="feed-post-votes">
                 <BiSolidUpvote
                     size={24}
                     style={{ color: isPostVoted === 1 ? '#ff4500' : '#d0d0d0' }}
-                    onClick={() => handleVote('up')}
+                    onClick={(e) => { e.stopPropagation(); handleVote('up') }}
                 />
-                <span>{postLikes}</span>
+                <span>{post?.likes}</span>
                 <BiSolidDownvote
                     size={24}
                     style={{ color: isPostVoted === -1 ? '#7193ff' : '#d0d0d0' }}
-                    onClick={() => handleVote('down')}
+                    onClick={(e) => { e.stopPropagation(); handleVote('down') }}
                 />
             </div>
             <div className="feed-post-main">
                 <div className="feed-post-head">
                     <img src={userImg} alt="" height={20} />
-                    <span className='feed-post-head-subreddit'>r/{post.community}</span>
-                    <span className='feed-post-head-user'>Posted by u/{username} 9 hours ago</span>
+                    <span className='feed-post-head-subreddit'>r/{post?.community}</span>
+                    <span className='feed-post-head-user'>Posted by u/{post?.username} 9 hours ago</span>
                 </div>
                 <div className="feed-post-content">
-                    <h4>{post.title}</h4>
-                    {post.flair && <span>{post.flair}</span>}
-                    <p>{post.text}</p>
+                    <h4>{post?.title}</h4>
+                    {post?.flair && <span>{post?.flair}</span>}
+                    <p>{post?.text}</p>
                 </div>
                 <div className="feed-post-btns">
                     <div className="feed-post-btn">
                         <GoComment size={22} />
-                        <span>{post.comments.length} comments</span>
+                        <span>{post?.comments?.length} comments</span>
                     </div>
                     <div className="feed-post-btn">
                         <LiaShareSolid size={22} />

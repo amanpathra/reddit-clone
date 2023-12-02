@@ -1,0 +1,78 @@
+.comment-main {
+    margin: 8px 0;
+}
+
+.comment {
+    position: relative;
+    z-index: 1;
+}
+
+.comment::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    background-color: #dedede;
+    transform: translateX(calc(12px - 50%));
+}
+
+.comment:hover::before{
+    background-color: #ff7644;
+}
+
+.comment-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.comment-user-profile > img {
+    height: 24px;
+    outline: 6px solid white;
+}
+
+.comment-user-profile > span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.comment > div:nth-child(n + 2) {
+    margin-left: calc(24px + 10px);
+}
+
+.comment-content {
+    padding-bottom: 8px;
+}
+
+.comment-interactions {
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+    padding-bottom: 15px;
+}
+
+.comment-interactions>svg{
+    cursor: pointer;
+}
+
+.comment-interactions-share{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* margin-left: 10px; */
+    font-size: 0.9rem;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+.comment-interactions-share:hover{
+    background-color: #ebebeb;
+}
+
+.comment-interactions-share>button{
+    border: none;
+    background-color: transparent;
+}

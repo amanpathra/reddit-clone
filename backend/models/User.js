@@ -20,13 +20,22 @@ const UserSchema = new Schema({
         default: Date.now
     },
     image: {
-        type: String
+        type: String,
+        default: 'https://www.redditstatic.com/avatars/avatar_default_02_0079D3.png'
     },
     likedPosts: {
         type: Array,
         default: []
     },
     dislikedPosts: {
+        type: Array,
+        default: []
+    },
+    savedPosts: {
+        type: Array,
+        default: []
+    },
+    myPosts: {
         type: Array,
         default: []
     }

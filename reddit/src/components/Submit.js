@@ -4,7 +4,7 @@ import { GoChevronDown } from 'react-icons/go';
 import { CiShoppingTag } from 'react-icons/ci';
 import '../styles/Submit.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { setPosts } from '../redux/store';
+import { setFeedPosts } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 
 const Submit = () => {
@@ -25,7 +25,7 @@ const Submit = () => {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": user
+                "auth-token": user.token
             },
             body: JSON.stringify({
                 community: communityValue,
@@ -36,7 +36,7 @@ const Submit = () => {
         });
 
         const data = await res.json();
-        dispatch(setPosts({post: data}))
+        dispatch(setFeedPosts({post: data}))
         navigate('/')
     }
     
@@ -70,7 +70,8 @@ const Submit = () => {
                             rows="30>"
                             placeholder='Text'
                             onChange={(e) => setTextValue(e.target.value)}
-                        >{textValue}</textarea>
+                            value={textValue}
+                        ></textarea>
                     </div>
                     <div className="submit-flair">
                         <div className="submit-flair-box">

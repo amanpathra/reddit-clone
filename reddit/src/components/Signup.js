@@ -34,7 +34,7 @@ const Signup = () => {
         // }
 
         if(data.success){
-            dispatch(setUser({user: data.authToken}));
+            dispatch(setUser({ set: 'token', token: data.authToken }));
             navigate('/')
         }
     }

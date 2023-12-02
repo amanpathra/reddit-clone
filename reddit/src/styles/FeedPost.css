@@ -2,8 +2,11 @@
     display: flex;
     background-color: white;
     padding: 12px;
-    border-radius: 5px;
     gap: 12px;
+}
+
+.round-corner{
+    border-radius: 5px;
 }
 
 .feed-post-votes{
@@ -86,7 +89,7 @@
 }
 
 .feed-post-btn:hover{
-    background-color: rgb(235, 235, 235);
+    background-color: #ebebeb;
 }
 
 .feed-post-btn span{

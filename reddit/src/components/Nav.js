@@ -1,24 +1,46 @@
-import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
-import RedditLogo from '../assets/Reddit-logo.png';
-import { Search, Chat, Add, Notifications, KeyboardArrowDown} from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../redux/store';
+
+import { Search, Chat, Add, Notifications, KeyboardArrowDown } from '@mui/icons-material';
 
 import '../styles/Nav.css'
+import RedditLogo from '../assets/Reddit-logo.png';
 
 const Nav = () => {
 
+    const dispatch = useDispatch();
+    
+    const { user } = useSelector(state => state.app);
+
     const [searchVal, setSearchVal] = useState('');
     
+    useEffect(() => {
+        (async () => {
+            const resUser = await fetch('http://localhost:5000/api/auth/getUser', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    "auth-token": user.token
+                }
+            })
+            const resUserData = await resUser.json();
+            dispatch(setUser({ set: 'userData', userData: resUserData }));
+        })();
+    }, [user.token, dispatch])
+    
+
     return (
         <nav className='nav'>
             <div className="nav-logo">
                 <Link to='/'>
-                    <img src={RedditLogo} alt="Logo" height={60}/>
+                    <img src={RedditLogo} alt="Logo" height={60} />
                 </Link>
             </div>
             <div className="nav-search">
                 <div className="nav-search-main">
-                    <Search sx={{fontSize: '32px', color: 'gray'}}/>
+                    <Search sx={{ fontSize: '32px', color: 'gray' }} />
                     <input
                         type="search"
                         placeholder='Search Reddit'
@@ -30,26 +52,26 @@ const Nav = () => {
             </div>
             <div className="nav-buttons">
                 <Link to={'/chat'} className='nav-btn'>
-                    <Chat sx={{fontSize: '20px'}}/>
+                    <Chat sx={{ fontSize: '20px' }} />
                     <span>Chat</span>
                 </Link>
                 <Link to={'/submit'} className='nav-btn'>
-                    <Add sx={{fontSize: '20px'}}/>
+                    <Add sx={{ fontSize: '20px' }} />
                     <span>Create Post</span>
                 </Link>
                 <Link to={'/notifications'} className='nav-btn'>
-                    <Notifications sx={{fontSize: '20px'}} />
+                    <Notifications sx={{ fontSize: '20px' }} />
                     <span>Notifications</span>
                 </Link>
             </div>
             <div className="nav-account">
                 <div className="dropdown-btn">
-                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile" height={32}/>
+                    <img src={user.userData?.image} alt="profile" height={32} />
                     <div className="dropdown-btn-user">
-                        <span>amanpathra</span>
+                        <span>{user.userData?.username}</span>
                         <span>4.3k Karma</span>
                     </div>
-                    <KeyboardArrowDown/>
+                    <KeyboardArrowDown />
                 </div>
             </div>
         </nav>

@@ -99,14 +99,8 @@ router.post('/login',
 
 router.get('/getUser', fetchuser, async (req, res) => {
     try {
-        if (req.header("get") === 'userWhoPosted'){
-            let userId = req.header("id");
-            const user = await User.findById(userId).select("username");
-            return res.json(user);
-        } else if (req.header("get") === 'loggedInUser'){
-            const user = await User.findById(req.user.id).select("likedPosts dislikedPosts");
-            return res.json(user)
-        }
+        const user = await User.findById(req.user.id);
+        return res.json(user);
     } catch (error) {
         console.error(error.message);
         return res.status(500).send('Internal server error');
