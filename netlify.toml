@@ -1,7 +1,7 @@
 [build]
-  base = "reddit-clone"
+  base = "reddit"
   command = "npm run build"
-  publish = "reddit/public"
+  publish = "public"
 
 [[redirects]]
   from = "/*"
@@ -12,4 +12,4 @@
   NODE_VERSION = "v18.15.0"  # Replace with your Node.js version
 
 [dev]
-  command = "node index.js"  # Adjust this based on your local development setup
+  command = "node backend/index.js"  # Adjust this based on your local development setup
