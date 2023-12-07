@@ -1,8 +1,15 @@
 [build]
-  base = "reddit"  # Path to your frontend directory
-  command = "npm run build"    # Build command for the frontend
-  functions = "backend"  # Path to your backend serverless functions directory
+  base = "reddit"
+  command = "npm run build"
   publish = "reddit/public"
 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "your_node_version"  # Replace with your Node.js version
+
 [dev]
-  command = "nodemon index.js"  # Command to run during local development, adjust based on your setup
+  command = "node index.js"  # Adjust this based on your local development setup
