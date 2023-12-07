@@ -1,5 +1,5 @@
 [build]
-  base = "reddit"
+  base = "reddit-clone"
   command = "npm run build"
   publish = "reddit/public"
 
