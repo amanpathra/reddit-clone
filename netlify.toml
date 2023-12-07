@@ -1,7 +1,7 @@
 [build]
-  base = "/reddit"  # Path to your frontend directory
+  base = "reddit-clone/reddit"  # Path to your frontend directory
   command = "npm run build"    # Build command for the frontend
-  functions = "/backend"  # Path to your backend serverless functions directory
+  functions = "reddit-clone/backend"  # Path to your backend serverless functions directory
 
 [dev]
-  command = "npm run dev"  # Command to run during local development, adjust based on your setup
+  command = "nodemon index.js"  # Command to run during local development, adjust based on your setup
