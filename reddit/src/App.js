@@ -21,7 +21,7 @@ function App() {
 
     useEffect(() => {
         if (!user.token && location.pathname !== '/signup') navigate('/login')
-    }, [user.token, navigate])
+    }, [user.token, navigate, location.pathname])
     
     return (
         <div className="App">

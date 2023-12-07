@@ -10,7 +10,7 @@ import { GoComment } from 'react-icons/go'
 import { LiaShareSolid } from 'react-icons/lia'
 import { PiBookmarkSimpleFill } from 'react-icons/pi'
 
-import userImg from '../assets/user.png';
+// import userImg from '../assets/user.png';
 import getTimeByDate from '../middlewares/getTimeByDate';
 import '../styles/FeedPost.css'
 

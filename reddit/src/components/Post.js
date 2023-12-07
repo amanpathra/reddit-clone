@@ -31,7 +31,7 @@ const Post = () => {
             dispatch(setFocusedPost({ type: 'SET_COMMENTS', comments: postCommets }));
             setMainComments(focusedPost?.comments?.filter(cmnt => cmnt.parent === focusedPost?.id))
         })();
-    }, [dispatch, focusedPost.id])
+    }, [dispatch, focusedPost.id, focusedPost.comments])
 
     const toggleSortBtn = (e) => {
         Array.from(e.target.parentNode.children).forEach(elem => elem.classList.remove('comment-sort-btn-active'));

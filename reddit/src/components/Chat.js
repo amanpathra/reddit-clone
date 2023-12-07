@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setConversation } from '../redux/store';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { setConversation } from '../redux/store';
 import { io } from 'socket.io-client';
 
 import { IoSettingsOutline } from "react-icons/io5";
@@ -59,7 +59,7 @@ const Chat = () => {
             socket.off('recieve');
         }
     
-    }, [])
+    }, [socket])
     
     const send = () => {
         const newMessage = { sender: 'YOU', text: message };
