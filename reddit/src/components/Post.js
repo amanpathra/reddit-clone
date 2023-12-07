@@ -15,10 +15,8 @@ const Post = () => {
     const dispatch = useDispatch();
 
     const { focusedPost } = useSelector(state => state.app);
-    // const mainComments = focusedPost.comments.filter(cmnt => cmnt.parent === focusedPost?.id);
     
     const [mainComments, setMainComments] = useState([]);
-    console.log(mainComments);
 
     useEffect(() => {
         (async () => {
@@ -30,7 +28,6 @@ const Post = () => {
                 }
             })
             const postCommets = await res.json();
-            console.log(postCommets)
             dispatch(setFocusedPost({ type: 'SET_COMMENTS', comments: postCommets }));
             setMainComments(focusedPost?.comments?.filter(cmnt => cmnt.parent === focusedPost?.id))
         })();

@@ -26,7 +26,11 @@ const PostSchema = new Schema({
     comments:{
         type: Array,
         default: []
-    }
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
 })
 
 const Post = mongoose.model('post', PostSchema);

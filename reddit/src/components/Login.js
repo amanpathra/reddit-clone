@@ -16,7 +16,7 @@ const Login = () => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch('http://localhost:5000/api/auth/login', {
+        const res = await fetch('http://192.168.29.205:5000/api/auth/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -29,8 +29,20 @@ const Login = () => {
         if(data.success){
             dispatch(setUser({set: 'token', token: data.authToken}));
             navigate('/');
+        }else{
+            alert(data.error)
         }
     }
+
+    // const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // if (isMobile) {
+    //     // The client is on a mobile device
+    //     alert('Mobile');
+    // } else {
+    //     // The client is on a desktop
+    //     alert('Desktop');
+    // }
     
     return (
         <div className='login'>

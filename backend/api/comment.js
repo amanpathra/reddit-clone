@@ -16,7 +16,6 @@ router.post('/submit',
     async (req, res) => {
 
         const errors = validationResult(req);
-        console.log(errors);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
         try {
@@ -27,11 +26,13 @@ router.post('/submit',
                 post: req.headers.postid,
                 parent: req.body.commentId
             })
+
+            if (req.body.comment.anonymous) {console.log('workn'); delete newComment.user};
+            console.log(newComment);
             
             const saveComment = await newComment.save();
-            console.log(saveComment)
             
-            await Post.findByIdAndUpdate(req.headers.postid, { $push: { comments: saveComment._id }})
+            await Post.findByIdAndUpdate(req.headers.postid, { $push: { comments: saveComment._id }});
             
             if (req.body.commentId) await Comment.findByIdAndUpdate(req.body.commentId, {$push: {replies: saveComment._id}});
 
@@ -52,9 +53,10 @@ router.get('/getPostComments', async (req, res) => {
         const comments = await Comment.find({ parent: req.headers.postid });
         
         const cmnts = await Promise.all(comments.map(async cmnt => {
-            const user = await User.findById(cmnt.user).select('username');
+            const user = await User.findById(cmnt.user).select('username image');
             let cmntt = cmnt.toObject();
             cmntt.username = user.username;
+            cmntt.userimage = user.image;
             return cmntt;
         }))
         return res.json(cmnts);
@@ -68,9 +70,10 @@ router.get('/getReplies', async (req, res) => {
         const replies = await Comment.find({ parent: req.headers.commentid });
 
         const rpls = await Promise.all(replies.map(async rpl => {
-            const user = await User.findById(rpl.user).select('username');
+            const user = await User.findById(rpl.user).select('username image');
             let rpll = rpl.toObject();
             rpll.username = user.username;
+            rpll.userimage = user.image;
             return rpll;
         }))
         // console.log(rpls)
@@ -80,6 +83,46 @@ router.get('/getReplies', async (req, res) => {
         console.log(error);
     }
 
+})
+
+router.put('/vote/:commentid', fetchuser, async (req, res) => {
+    try {
+        const comment = await Comment.findByIdAndUpdate(req.params.commentid, { $inc: { likes: req.body.creament } });
+        if (req.body.vote === 'up') {
+            switch (req.body.isCommentVoted) {
+                case 0:
+                    await User.findByIdAndUpdate(req.user.id, { $push: { votedComments: { vote: req.body.vote, id: req.params.commentid } } }, {new: true});
+                    break;
+                case 1:
+                    await User.findByIdAndUpdate(req.user.id, { $pull: { votedComments: { id: req.params.commentid } } });
+                    break;
+                case -1:
+                    await User.findByIdAndUpdate(req.user.id,
+                        { $set: { 'votedComments.$[elem].vote': req.body.vote } },
+                        { arrayFilters: [{ 'elem.id': req.params.commentid }] }
+                    )
+                    break;
+            }
+        } else if (req.body.vote === 'down') {
+            switch (req.body.isCommentVoted) {
+                case 0:
+                    await User.findByIdAndUpdate(req.user.id, { $push: { votedComments: { vote: req.body.vote, id: req.params.commentid } } });
+                    break;
+                case 1:
+                    await User.findByIdAndUpdate(req.user.id,
+                        { $set: { 'votedComments.$[elem].vote': req.body.vote } },
+                        { arrayFilters: [{ 'elem.id': req.params.commentid }] }
+                    )
+                    break;
+                case -1:
+                    await User.findByIdAndUpdate(req.user.id, { $pull: { votedComments: { id: req.params.commentid } } });
+                    break;
+            }
+        }
+        return res.json(comment);
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 export default router;

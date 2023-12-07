@@ -12,6 +12,10 @@ const appSlice = createSlice({
         focusedPost: {
             id: null,
             comments: []
+        },
+        conversation: {
+            participant: null,
+            chat: []
         }
     },
     reducers: {
@@ -28,14 +32,16 @@ const appSlice = createSlice({
                 case 'up':
                     switch (action.payload.isPostVoted) {
                         case 0:
-                            state.user.userData.likedPosts.push(action.payload.postId);
+                            state.user.userData.votedPosts.push({vote: action.payload.set, id: action.payload.postId});
                             break;
                         case 1:
-                            state.user.userData.likedPosts.splice(state.user.userData.likedPosts.indexOf(action.payload.postId), 1)
+                            state.user.userData.votedPosts.filter(obj => obj.id !== action.payload.postId)
                             break;
                         case -1:
-                            state.user.userData.likedPosts.push(action.payload.postId);
-                            state.user.userData.dislikedPosts.splice(state.user.userData.dislikedPosts.indexOf(action.payload.postId), 1)
+                            const foundPost = state.user.userData.votedPosts.find(obj => obj.id === action.payload.postId)
+                            if(foundPost){
+                                foundPost.vote = action.payload.set;
+                            }
                             break;
                         default:
                             break;
@@ -45,14 +51,16 @@ const appSlice = createSlice({
                 case 'down':
                     switch (action.payload.isPostVoted) {
                         case 0:
-                            state.user.userData.dislikedPosts.push(action.payload.postId);
+                            state.user.userData.votedPosts.push({ vote: action.payload.set, id: action.payload.postId });
                             break;
                         case 1:
-                            state.user.userData.dislikedPosts.push(action.payload.postId);
-                            state.user.userData.likedPosts.splice(state.user.userData.likedPosts.indexOf(action.payload.postId), 1)
+                            const foundPost = state.user.userData.votedPosts.find(obj => obj.id === action.payload.postId)
+                            if (foundPost) {
+                                foundPost.vote = action.payload.set;
+                            }
                             break;
                         case -1:
-                            state.user.userData.dislikedPosts.splice(state.user.userData.dislikedPosts.indexOf(action.payload.postId), 1)
+                            state.user.userData.votedPosts.filter(obj => obj.id !== action.payload.postId)
                             break;
                         default:
                             break;
@@ -72,6 +80,7 @@ const appSlice = createSlice({
         },
         updatePostVotes: (state, action) => {
             const newFeedPosts = state.feedPosts.filter(feedPost => feedPost._id !== action.payload.postId)
+            console.log(newFeedPosts);
             state.feedPosts = newFeedPosts;
         },
         setFocusedPost: (state, action) => {
@@ -86,13 +95,65 @@ const appSlice = createSlice({
                         return arrayWithDups.find(obj => (obj._id === id))
                     })
                     break;
-                    
-                case 'SET_REPLIES':
-                    state.focusedPost.comments = state.focusedPost.comments.concat(action.payload.comments);
-                    break;
 
                 case 'PUSH_COMMENT':
                     state.focusedPost.comments.unshift(action.payload.comment)
+                    break;
+
+                case 'UPDATE_COMMENTS_VOTES':
+                    switch (action.payload.vote){
+                        case 'up':
+                            switch (action.payload.isCommentVoted){
+                                case 0:
+                                    state.user.userData.votedComments.push({vote: action.payload.vote, id: action.payload.commentId});
+                                    break;
+                                case 1:
+                                    state.user.userData.votedComments.filter(obj => obj.id !== action.payload.commentId)
+                                    break;
+                                case -1:
+                                    const foundPost = state.user.userData.votedComments.find(obj => obj.id === action.payload.commentId)
+                                    if (foundPost) {
+                                        foundPost.vote = action.payload.vote;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        case 'down':
+                            switch (action.payload.isPostVoted) {
+                                case 0:
+                                    state.user.userData.votedComments.push({ vote: action.payload.vote, id: action.payload.commentId });
+                                    break;
+                                case 1:
+                                    const foundPost = state.user.userData.votedComments.find(obj => obj.id === action.payload.commentId)
+                                    if (foundPost) {
+                                        foundPost.vote = action.payload.vote;
+                                    }
+                                    break;
+                                case -1:
+                                    state.user.userData.votedComments.filter(obj => obj.id !== action.payload.commentId)
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                break;
+                default:
+                    break;
+            }
+        },
+        setConversation: (state, action) => {
+            switch (action.payload.type) {
+                case 'SEND_MSG':
+                    state.conversation.chat.push({sender: 'YOU', text: action.payload.message})                    
+                    break;
+
+                case 'RECIEVE_MSG':
+                    state.conversation.chat.push({sender: 'PARTICIPANT', text: action.payload.message})                    
                     break;
             
                 default:
@@ -102,7 +163,7 @@ const appSlice = createSlice({
     }
 })
 
-export const { setUser, setFeedPosts, updatePostVotes, setFocusedPost } = appSlice.actions
+export const { setUser, setFeedPosts, updatePostVotes, setFocusedPost, setConversation } = appSlice.actions
 
 export const store = configureStore({
     reducer: {

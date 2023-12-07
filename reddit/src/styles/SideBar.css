@@ -3,6 +3,7 @@
     flex-direction: column;
     background-color: white;
     padding: 15px;
+    border-left: 1px solid rgb(208, 208, 208);
 }
 
 .sidebar-section{

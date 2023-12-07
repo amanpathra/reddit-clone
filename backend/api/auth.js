@@ -94,7 +94,6 @@ router.post('/login',
             console.log(error)
         }
     }
-    
 )
 
 router.get('/getUser', fetchuser, async (req, res) => {
@@ -104,53 +103,6 @@ router.get('/getUser', fetchuser, async (req, res) => {
     } catch (error) {
         console.error(error.message);
         return res.status(500).send('Internal server error');
-    }
-})
-
-router.put('/updateUser', fetchuser, async (req, res) => {
-    try {
-        if (req.header("vote") === 'up'){
-            console.log(req.header('isPostVoted'))
-            if (req.header("isPostVoted") == 0){
-                const user = await User.findByIdAndUpdate(req.user.id, { $push: { likedPosts: req.body.postId } }, { new: true });
-                return res.json(user);
-            } else if (req.header("isPostVoted") == 1){
-                const user = await User.findByIdAndUpdate(req.user.id, { $pull: { likedPosts: req.body.postId } }, { new: true });
-                return res.json(user);
-            } else {
-                const user = await User.findByIdAndUpdate(
-                    req.user.id,
-                    { 
-                        $push: { likedPosts: req.body.postId },
-                        $pull: { dislikedPosts: req.body.postId }
-                    },
-                    { new: true }
-                )
-                return res.json(user);
-            }
-
-        } else {
-            if (req.header("isPostVoted") == 0) {
-                const user = await User.findByIdAndUpdate(req.user.id, { $push: { dislikedPosts: req.body.postId } }, { new: true });
-                return res.json(user);
-            } else if (req.header("isPostVoted") == 1) {
-                const user = await User.findByIdAndUpdate(
-                    req.user.id,
-                    {
-                        $pull: { likedPosts: req.body.postId },
-                        $push: { dislikedPosts: req.body.postId }
-                    },
-                    { new: true }
-                )
-                return res.json(user);
-            } else {
-                const user = await User.findByIdAndUpdate(req.user.id, { $pull: { dislikedPosts: req.body.postId } }, { new: true });
-                return res.json(user);
-            }
-        }
-
-    } catch (error) {
-        console.log(error)
     }
 })
 

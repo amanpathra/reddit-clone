@@ -23,11 +23,11 @@ const UserSchema = new Schema({
         type: String,
         default: 'https://www.redditstatic.com/avatars/avatar_default_02_0079D3.png'
     },
-    likedPosts: {
+    votedPosts: {
         type: Array,
         default: []
     },
-    dislikedPosts: {
+    votedComments: {
         type: Array,
         default: []
     },

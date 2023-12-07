@@ -1,0 +1,7 @@
+[build]
+  base = "frontend-directory"  # Path to your frontend directory
+  command = "npm run build"    # Build command for the frontend
+  functions = "backend-directory/functions"  # Path to your backend serverless functions directory
+
+[dev]
+  command = "npm run dev"  # Command to run during local development, adjust based on your setup

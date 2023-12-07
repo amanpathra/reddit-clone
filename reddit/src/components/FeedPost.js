@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { setUser, updatePostVotes, setFocusedPost } from '../redux/store';
+import { setUser, setFocusedPost } from '../redux/store';
 
 
 import { BiSolidDownvote, BiSolidUpvote } from 'react-icons/bi';
@@ -10,93 +10,55 @@ import { GoComment } from 'react-icons/go'
 import { LiaShareSolid } from 'react-icons/lia'
 import { PiBookmarkSimpleFill } from 'react-icons/pi'
 
-import userImg from '../assets/user.png'
+import userImg from '../assets/user.png';
+import getTimeByDate from '../middlewares/getTimeByDate';
 import '../styles/FeedPost.css'
 
 const FeedPost = ({ postId, alone }) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    
+    const { user } = useSelector(state => state.app);
 
     const [post, setPost] = useState(null);
-    const [isPostVoted, setIsPostVoted] = useState(0);
-
-    const { user } = useSelector(state => state.app);
+    const [isPostVoted, setIsPostVoted] = useState(user?.userData?.votedPosts.find(obj => obj.id === postId) ? (user?.userData?.votedPosts.find(obj => obj.id === postId).vote === 'up' ? 1 : -1) : 0);
 
     useEffect(() => {
         (async () => {
-            const res = await fetch('http://localhost:5000/api/post/getPost', {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                    "id": postId
-                }
-            })
+            const res = await fetch(`http://localhost:5000/api/post/getPost/${postId}`);
             const restData = await res.json();
             setPost(restData);
-
-            setIsPostVoted(user.userData?.likedPosts.includes(postId) ? 1 : user.userData?.dislikedPosts.includes(postId) ? -1 : 0);
         })();
     }, [postId, user])
 
+    const voteWork = async (vote, isPostVoted, creament) => {
+        dispatch(setUser({ set: vote, postId, isPostVoted }))
+        setPost({ ...post, likes: post.likes + creament });
+
+        await fetch(`http://localhost:5000/api/post/vote/${postId}`, {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": user.token,
+            },
+            body: JSON.stringify({ isPostVoted, creament, vote })
+        })
+    }
+
     const handleVote = async (vote) => {
-        let crement;
+        let creament;
         switch (vote) {
             case 'up':
-                crement = isPostVoted === -1 ? 2 : isPostVoted === 0 ? 1 : -1;
-
-                dispatch(updatePostVotes({ crement, postId }));
-                dispatch(setUser({ set: vote, postId, isPostVoted }))
-                setPost({ ...post, likes: post.likes + crement });
-
-                await fetch('http://localhost:5000/api/post/vote', {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ postId, crement, vote })
-                })
-
-                await fetch(`http://localhost:5000/api/auth/updateUser`, {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "auth-token": user.token,
-                        "isPostVoted": isPostVoted,
-                        "vote": vote
-                    },
-                    body: JSON.stringify({ postId })
-                })
-                setIsPostVoted(crement === -1 ? 0 : 1)
+                creament = isPostVoted === -1 ? 2 : isPostVoted === 0 ? 1 : -1;
+                await voteWork(vote, isPostVoted, creament);
+                setIsPostVoted(creament === -1 ? 0 : 1);
                 break;
 
             case 'down':
-                crement = isPostVoted === -1 ? 1 : isPostVoted === 0 ? -1 : -2;
-
-                dispatch(updatePostVotes({ crement, postId }))
-                dispatch(setUser({ set: vote, postId, isPostVoted }))
-                setPost({ ...post, likes: post.likes + crement })
-
-                await fetch('http://localhost:5000/api/post/vote', {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ postId, crement, vote })
-                })
-
-                await fetch(`http://localhost:5000/api/auth/updateUser`, {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "auth-token": user.token,
-                        "isPostVoted": isPostVoted,
-                        "vote": vote
-                    },
-                    body: JSON.stringify({ postId })
-                })
-
-                setIsPostVoted(crement === 1 ? 0 : -1)
+                creament = isPostVoted === -1 ? 1 : isPostVoted === 0 ? -1 : -2;
+                await voteWork(vote, isPostVoted, creament);
+                setIsPostVoted(creament === 1 ? 0 : -1);
                 break;
 
             default:
@@ -126,9 +88,9 @@ const FeedPost = ({ postId, alone }) => {
             </div>
             <div className="feed-post-main">
                 <div className="feed-post-head">
-                    <img src={userImg} alt="" height={20} />
+                    <img src={post?.userimage} alt="" height={20} />
                     <span className='feed-post-head-subreddit'>r/{post?.community}</span>
-                    <span className='feed-post-head-user'>Posted by u/{post?.username} 9 hours ago</span>
+                    <span className='feed-post-head-user'>Posted by u/{post?.username} {getTimeByDate(post?.date)}</span>
                 </div>
                 <div className="feed-post-content">
                     <h4>{post?.title}</h4>

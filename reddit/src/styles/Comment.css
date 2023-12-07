@@ -29,9 +29,10 @@
     z-index: 2;
 }
 
-.comment-user-profile > img {
+.comment-user-profile-picture {
     height: 24px;
     outline: 6px solid white;
+    border-radius: 50%;
 }
 
 .comment-user-profile > span {
@@ -45,6 +46,7 @@
 
 .comment-content {
     padding-bottom: 8px;
+    white-space: pre-line;
 }
 
 .comment-interactions {

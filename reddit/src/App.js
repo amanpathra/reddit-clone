@@ -8,9 +8,10 @@ import Feed from './components/Feed';
 import SideBar from './components/SideBar';
 import Submit from './components/Submit';
 import Login from './components/Login';
-import authImg from './assets/redditAuthImg.webp';
 import Signup from './components/Signup';
 import Post from './components/Post';
+import Chat from './components/Chat';
+import authImg from './assets/redditAuthImg.webp';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
                             <Route exact path='/' element={<Feed />} />
                             <Route exact path='/submit' element={<Submit />} />
                             <Route path='/post/:postId' element={<Post />} />
+                            <Route exact path='/chat' element={<Chat />} />
                         </Routes>
                         <SideBar/>
                     </div>

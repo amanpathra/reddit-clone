@@ -40,6 +40,10 @@
     gap: 10px;
 }
 
+.feed-post-head>img{
+    border-radius: 50%;
+}
+
 .feed-post-head-subreddit{
     font-size: 13px;
     font-weight: 700;
