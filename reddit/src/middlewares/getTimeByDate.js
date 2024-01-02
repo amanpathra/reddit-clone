@@ -25,4 +25,15 @@ const getTimeByDate = (dateString) => {
     }
 }
 
+export function formatDate(inputDate, format) {
+    if (inputDate){
+        const date = new Date(inputDate);
+        const options = format === 'DD Mmm' ? { day: 'numeric', month: 'short' } : { year: 'numeric', month: 'short' };
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+        return formattedDate;
+    } else {
+        return format === 'DD Mmm' ? '01 Jan ' : 'Jan 1970';
+    }
+}
+
 export default getTimeByDate;

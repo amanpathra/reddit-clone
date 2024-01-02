@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 
-const appSlice = createSlice({
-    name: 'app',
+const userSlice = createSlice({
+    name: 'user',
     initialState: {
         user: {
             token: null,
@@ -12,10 +12,6 @@ const appSlice = createSlice({
         focusedPost: {
             id: null,
             comments: []
-        },
-        conversation: {
-            participant: null,
-            chat: []
         }
     },
     reducers: {
@@ -72,11 +68,18 @@ const appSlice = createSlice({
             }
         },
         setFeedPosts: (state, action) => {
-            if (action.payload === null){
-                state.feedPosts = [];
-                return;
+            switch (action.payload.type){
+                case 'SET_POSTS':
+                    state.feedPosts = action.payload.posts;
+                    break;
+
+                case 'PUSH_POST':
+                    state.feedPosts.unshift(action.payload.post);
+                    break;
+                
+                default:
+                    break;
             }
-            state.feedPosts.unshift(action.payload.post);
         },
         updatePostVotes: (state, action) => {
             const newFeedPosts = state.feedPosts.filter(feedPost => feedPost._id !== action.payload.postId)
@@ -145,17 +148,61 @@ const appSlice = createSlice({
                 default:
                     break;
             }
+        }
+    }
+})
+
+const chatSlice = createSlice({
+    name: 'chat',
+    initialState: {
+        chats: [],
+        conversation: {
+            participants: [],
+            chat: []
+        }
+    },
+    reducers: {
+        setChats: (state, action) => {
+            switch(action.payload.type){
+                case 'ADD_NEW_CHAT':
+                    state.chats.push(action.payload.chat);
+                    break;
+                    
+                case 'SET_FETCHED_CHATS':
+                    state.chats = action.payload.chats;
+                    break;
+
+                case 'SET_LATEST_MSG':
+                    const index = state.chats.findIndex(chatObj => chatObj._id === action.payload.message.chat);
+                    if (index !== -1) {
+                        state.chats[index].latestMessage = action.payload.message;
+                    }
+                    break;
+            }
         },
         setConversation: (state, action) => {
             switch (action.payload.type) {
-                case 'SEND_MSG':
-                    state.conversation.chat.push({sender: 'YOU', text: action.payload.message})                    
+                case 'SEND':
+                    state.conversation.chat.push({ sender: 'YOU', text: action.payload.message });
                     break;
 
-                case 'RECIEVE_MSG':
-                    state.conversation.chat.push({sender: 'PARTICIPANT', text: action.payload.message})                    
+                case 'RECIEVE':
+                    state.conversation.chat.push({ sender: 'PARTICIPANT', text: action.payload.message });
                     break;
-            
+
+                case 'LEFT_CHAT':
+                    state.conversation.chat.push({ sender: 'SERVER', text: `${action.payload.name} left the chat` });
+                    break;
+
+                case 'JOINED_CHAT':
+                    state.conversation.chat.push({ sender: 'SERVER', text: `${action.payload.name} joined the chat` });
+                    break;
+
+                case 'SET_CHAT':
+                    state.conversation.chat = action.payload.chat;
+                    state.conversation.participants = action.payload.selectedChat.participants;
+                    break;
+
                 default:
                     break;
             }
@@ -163,10 +210,48 @@ const appSlice = createSlice({
     }
 })
 
-export const { setUser, setFeedPosts, updatePostVotes, setFocusedPost, setConversation } = appSlice.actions
+const communitySlice = createSlice({
+    name: 'community',
+    initialState: {
+        community: {}
+    },
+    reducers: {
+        setCommunity: (state, action) => {
+            switch (action.payload.type){
+                case 'SET_COMMUNITY':
+                    state.community = action.payload.community;
+                    break;
+            }
+        }
+    }
+})
+
+const profileSlice = createSlice({
+    name: 'profile',
+    initialState: {
+        profileUser: {}
+    },
+    reducers: {
+        setProfileUser: (state, action) => {
+            switch (action.payload.type) {
+                case 'SET_USER':
+                    state.profileUser = action.payload.user;
+                    break;
+            }
+        }
+    }
+})
+
+export const { setUser, setFeedPosts, updatePostVotes, setFocusedPost } = userSlice.actions
+export const { setConversation, setChats } = chatSlice.actions
+export const { setCommunity } = communitySlice.actions;
+export const { setProfileUser } = profileSlice.actions;
 
 export const store = configureStore({
     reducer: {
-        app: appSlice.reducer
+        user: userSlice.reducer,
+        chat: chatSlice.reducer,
+        community: communitySlice.reducer,
+        profile: profileSlice.reducer
     }
 });

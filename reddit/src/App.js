@@ -12,12 +12,15 @@ import Signup from './components/Signup';
 import Post from './components/Post';
 import Chat from './components/Chat';
 import authImg from './assets/redditAuthImg.webp';
+import Community from './components/Community';
+import CreateCommunity from './components/CreateCommunity';
+import Profile from './components/Profile';
 
 function App() {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useSelector(state => state.app);
+    const { user } = useSelector(state => state.user);
 
     useEffect(() => {
         if (!user.token && location.pathname !== '/signup') navigate('/login')
@@ -31,11 +34,14 @@ function App() {
                     <div className="main">
                         <Routes>
                             <Route exact path='/' element={<Feed />} />
-                            <Route exact path='/submit' element={<Submit />} />
+                            <Route exact path='/create/post' element={<Submit />} />
+                            <Route exact path='/create/community' element={<CreateCommunity />} />
                             <Route path='/post/:postId' element={<Post />} />
+                            <Route path='/r/:community' element={<Community />} />s
+                            <Route path='/u/:username' element={<Profile />} />
                             <Route exact path='/chat' element={<Chat />} />
                         </Routes>
-                        <SideBar/>
+                        <SideBar user={user}/>
                     </div>
                 </>
             ) : (

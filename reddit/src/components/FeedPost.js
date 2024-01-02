@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import { setUser, setFocusedPost } from '../redux/store';
 
@@ -14,19 +14,19 @@ import { PiBookmarkSimpleFill } from 'react-icons/pi'
 import getTimeByDate from '../middlewares/getTimeByDate';
 import '../styles/FeedPost.css'
 
-const FeedPost = ({ postId, alone }) => {
+const FeedPost = ({ postId, alone, communityPost }) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
-    const { user } = useSelector(state => state.app);
+
+    const { user } = useSelector(state => state.user);
 
     const [post, setPost] = useState(null);
     const [isPostVoted, setIsPostVoted] = useState(user?.userData?.votedPosts.find(obj => obj.id === postId) ? (user?.userData?.votedPosts.find(obj => obj.id === postId).vote === 'up' ? 1 : -1) : 0);
 
     useEffect(() => {
         (async () => {
-            const res = await fetch(`http://localhost:5000/api/post/getPost/${postId}`);
+            const res = await fetch(`http://192.168.29.205:5000/api/post/getPost/${postId}`);
             const restData = await res.json();
             setPost(restData);
         })();
@@ -36,7 +36,7 @@ const FeedPost = ({ postId, alone }) => {
         dispatch(setUser({ set: vote, postId, isPostVoted }))
         setPost({ ...post, likes: post.likes + creament });
 
-        await fetch(`http://localhost:5000/api/post/vote/${postId}`, {
+        await fetch(`http://192.168.29.205:5000/api/post/vote/${postId}`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
@@ -67,12 +67,12 @@ const FeedPost = ({ postId, alone }) => {
     }
 
     const handlePostClick = () => {
-        dispatch(setFocusedPost({type: 'SET_ID', id: postId}))
+        dispatch(setFocusedPost({ type: 'SET_ID', id: postId }))
         navigate(`/post/${postId}`)
     }
 
     return (
-        <div className={`feed-post${!alone?' round-corner':''}`} onClick={handlePostClick}>
+        <div className={`feed-post${!alone ? ' round-corner' : ''}`}>
             <div className="feed-post-votes">
                 <BiSolidUpvote
                     size={24}
@@ -88,11 +88,15 @@ const FeedPost = ({ postId, alone }) => {
             </div>
             <div className="feed-post-main">
                 <div className="feed-post-head">
-                    <img src={post?.userimage} alt="" height={20} />
-                    <span className='feed-post-head-subreddit'>r/{post?.community}</span>
-                    <span className='feed-post-head-user'>Posted by u/{post?.username} {getTimeByDate(post?.date)}</span>
+                    {!communityPost && (
+                        <>
+                            <img src={post?.userimage} alt="" height={20} />
+                            <Link to={`/r/${post?.community}`} className='feed-post-head-subreddit'>r/{post?.community}</Link>
+                        </>
+                    )}
+                    <span className='feed-post-head-user'>Posted by <Link to={`/u/${post?.username}`}>u/{post?.username}</Link> {getTimeByDate(post?.date)}</span>
                 </div>
-                <div className="feed-post-content">
+                <div className="feed-post-content" onClick={handlePostClick}>
                     <h4>{post?.title}</h4>
                     {post?.flair && <span>{post?.flair}</span>}
                     <p>{post?.text}</p>

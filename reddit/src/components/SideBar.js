@@ -5,40 +5,41 @@ import '../styles/SideBar.css'
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/store';
 
-const SideBar = () => {
+const SideBar = ({ user }) => {
 
 
     const toggleBtn = (e) => {
-        if(e.target.classList.contains('active')){
+        if (e.target.classList.contains('active')) {
             e.target.classList.remove('active')
-        }else{
+        } else {
             e.target.classList.add('active')
         }
     }
 
     const dispatch = useDispatch();
+
     const handleLogout = () => {
-        dispatch(setUser({user: null}))
+        dispatch(setUser({ user: null }))
     }
-    
+
     return (
         <div className='sidebar'>
             <div className="sidebar-section">
                 <div className="sidebar-section-head">
-                    <AccountCircle sx={{fontSize: '25px'}}/>
+                    <AccountCircle sx={{ fontSize: '25px' }} />
                     <span>My Stuff</span>
                 </div>
                 <div className="sidebar-section-btns">
-                    <Link to={'/user/:username'}>
+                    <Link to={`/u/${user?.userData?.username}`}>
                         Profile
                     </Link>
-                    <Link to={'/user/:username/avatar'}>
+                    <Link to={`/u/${user?.userData?.username}/avatar`}>
                         Your Avatar
                     </Link>
-                    <Link to={'/user/:username/saved'}>
+                    <Link to={`/u/${user?.userData?.username}/saved`}>
                         Saved
                     </Link>
-                    <Link to={'/user/:username/history'}>
+                    <Link to={`/u/${user?.userData?.username}/history`}>
                         History
                     </Link>
                 </div>
@@ -69,10 +70,10 @@ const SideBar = () => {
                 </div>
             </div>
             <div className="sidebar-section">
-                <div className="sidebar-section-head">
+                <Link to={'/create/community'} className="sidebar-section-head">
                     <Campaign sx={{ fontSize: '25px' }} />
-                    <span>Advertise</span>
-                </div>
+                    <span>Create Community</span>
+                </Link>
             </div>
             <div className="sidebar-section">
                 <div className="sidebar-section-head">

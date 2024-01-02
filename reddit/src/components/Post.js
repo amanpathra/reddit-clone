@@ -14,13 +14,13 @@ const Post = () => {
 
     const dispatch = useDispatch();
 
-    const { focusedPost } = useSelector(state => state.app);
+    const { focusedPost } = useSelector(state => state.user);
     
     const [mainComments, setMainComments] = useState([]);
 
     useEffect(() => {
         (async () => {
-            const res = await fetch('http://localhost:5000/api/comment/getPostComments', {
+            const res = await fetch('http://192.168.29.205:5000/api/comment/getPostComments', {
                 method: 'GET',
                 headers: {
                     'content-type': 'application/json',

@@ -106,4 +106,24 @@ router.get('/getUser', fetchuser, async (req, res) => {
     }
 })
 
+router.get('/getUserByUsername/:username', async (req, res) => {
+    try{
+        const user = await User.findOne({username: req.params.username});
+        return res.json(user);
+    } catch(error) {
+        console.error('Error getting the user by username: ', error.message);
+        return res.status(500).send('Internal Server Error.')
+    }
+})
+
+router.get('/getUserSuggestions', async (req, res) => {
+    try{
+        const users = await User.find({ username: { $regex: new RegExp(req.headers.query, 'i') } }).select('username image');
+        res.json({ users });
+    } catch (error){
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
 export default router;

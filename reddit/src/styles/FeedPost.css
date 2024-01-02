@@ -19,7 +19,7 @@
 
 .feed-post-votes svg{
     color: rgb(208, 208, 208);
-    cursor: pointer;;
+    cursor: pointer;
 }
 
 .feed-post-votes span{
@@ -47,11 +47,26 @@
 .feed-post-head-subreddit{
     font-size: 13px;
     font-weight: 700;
+    cursor: pointer;
+    color: dodgerblue;
+}
+
+.feed-post-head-subreddit:hover{
+    text-decoration: underline;
 }
 
 .feed-post-head-user{
     font-size: 12px;
     color: rgb(114, 114, 114);
+}
+
+.feed-post-head-user>a{
+    color: rgb(0, 0, 0);
+}
+
+.feed-post-head-user>span:hover{
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .feed-post-content{

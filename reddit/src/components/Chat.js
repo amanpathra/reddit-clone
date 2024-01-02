@@ -1,75 +1,56 @@
-import React, { useEffect, useState } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { setConversation } from '../redux/store';
-import { io } from 'socket.io-client';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setChats, setConversation } from '../redux/store';
 
-import { IoSettingsOutline } from "react-icons/io5";
-import { RxCross2 } from "react-icons/rx";
-import { PiPaperclipLight } from "react-icons/pi";
-import { AiOutlineSend } from "react-icons/ai";
 
+import ChatRoom from './ChatRoom';
+import CreateChat from '../modals/CreateChat';
 import '../styles/Chat.css';
-
-const ChatBundle = ({ msg }) => {
-    return (
-        <div className={`chat-bundle ${msg.sender === 'YOU' ? 'right' : 'left'}`}>
-            <div className="chat-bundle-pfp">
-                <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-            </div>
-            <div className="chat-bundle-msgs">
-                <span>{msg.text}</span>
-            </div>
-        </div>
-    )
-}
-
 
 const Chat = () => {
 
-    const [message, setMessage] = useState('');
-    const [chat, setChat] = useState([]);
-    // const [socket, setSocket] = useState(null);
+    const { chats } = useSelector(state => state.chat);
+    const { user } = useSelector(state => state.user);
+    const dispatch = useDispatch();
 
-    // const { conversation, user } = useSelector(state => state.app);
-    // const dispatch = useDispatch();s
+    const ref = useRef(null);
 
-    // setChat(conversation?.chat);
-
-    const socket = io('http://192.168.29.205:8000', {
-        withCredentials: true,
-        extraHeaders: {
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Origin": "http://192.168.29.205:8000"
-        }
-    });
-
-    // setSocket(newSocket);
-
-    // while(!socket){
-    //     console.log(socket)
-    // }
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedChat, setSelectedChat] = useState(chats[0]);
 
     useEffect(() => {
-        socket.on('recieve', data => {
-            // setChat([...chat, { sender: 'PARTICIPANT', text: data.message }])
-            setChat(state => [...state, { sender: 'PARTICIPANT', text: data.message }])
-        })
+        (async () => {
+            try {
+                const response = await fetch('http://192.168.29.205:5000/api/chat/user-chats', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'auth-token': user.token,
+                    },
+                });
 
-        return () => {
-            socket.off('recieve');
-        }
-    
-    }, [socket])
-    
-    const send = () => {
-        const newMessage = { sender: 'YOU', text: message };
+                const userChats = await response.json();
+                dispatch(setChats({ type: 'SET_FETCHED_CHATS', chats: userChats }));
+                setSelectedChat(chats[0]);
+            } catch (error) {
+                console.error('Error fetching user chats:', error.message);
+                // Handle error (e.g., show a message to the user)
+            }
+        })();
+    }, [dispatch, user.token])
 
-        setChat(state => [...state, newMessage])
-        // setChat([...chat, { sender: 'YOU', text: message }])
-        socket.emit('send', message)
-        setMessage('');
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCreateChat = async (e) => {
+        setIsModalOpen(true);
     }
 
+    const selectChat = (e, idx) => {
+        e.stopPropagation();
+        setSelectedChat(chats[idx]);
+    }
 
     return (
         <div className='chat'>
@@ -77,63 +58,45 @@ const Chat = () => {
                 <div className="chat-list-head">
                     <h2>Chat</h2>
                     <div className="unread-badge">2</div>
-                    <div className="create-chat">+</div>
+                    <button className="create-chat" onClick={handleCreateChat} ref={ref}>+</button>
                 </div>
                 <div className="chat-list-chats">
                     <h3>CHATS</h3>
-                    <div className="chat-person">
-                        <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-                        <span>finn_flames</span>
-                        <span>this is the latest msg</span>
-                    </div>
-                    <div className="chat-person">
-                        <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-                        <span>finn_flames</span>
-                        <span>this is the latest msg</span>
-                    </div>
-                    <div className="chat-person">
-                        <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-                        <span>finn_flames</span>
-                        <span>this is THE the latest msg</span>
-                    </div>
+                    {chats?.length !== 0 ? (
+                        chats?.map((chat, idx) => (
+                            <div className={`chat-person${chat?._id === selectedChat?._id ? ' selected' : ''}`} onClick={(e) => selectChat(e, idx)}>
+                                <img
+                                    src={chat?.isGroupChat ? (
+                                        'https://cdn.pixabay.com/photo/2019/08/11/18/48/icon-4399681_1280.png'
+                                    ) : (
+                                        chat?.participants
+                                            .find(participantId => participantId !== user?.userData?._id)
+                                            .image
+                                    )}
+                                    alt=""
+                                />
+                                <span>
+                                    {chat?.isGroupChat ? (
+                                        chat?.chatName
+                                    ) : (
+                                        chat?.participants
+                                            .find(participant => participant._id !== user?.userData?._id)
+                                            .username
+                                    )}
+                                </span>
+                                <span>
+                                    {chat?.latestMessage?.sender === user.userData._id ? 'You: ' : ''}
+                                    {chat?.latestMessage?.content}
+                                </span>
+                            </div>
+                        ))
+                    ) : (
+                        <span>No Chats</span>
+                    )}
                 </div>
             </div>
-            <div className="chat-room">
-                <div className="chat-room-head">
-                    <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-                    <span>finn_flames</span>
-                    <IoSettingsOutline size={24} />
-                    <RxCross2 size={24} />
-                </div>
-                <div className="chat-room-chat">
-                    <div className="chat-bundle left">
-                        <div className="chat-bundle-pfp">
-                            <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-                        </div>
-                        <div className="chat-bundle-msgs">
-                            <span>Hello</span>
-                            <span>What kind of style are you into?</span>
-                        </div>
-                    </div>
-                    <div className="chat-bundle right">
-                        <div className="chat-bundle-pfp">
-                            <img src='https://w7.pngwing.com/pngs/193/660/png-transparent-computer-icons-woman-avatar-avatar-girl-thumbnail.png' alt="" />
-                        </div>
-                        <div className="chat-bundle-msgs">
-                            <span>Hey!</span>
-                            <span>Nothing really specific.</span>
-                        </div>
-                    </div>
-                    {chat.map(msg => {
-                        return <ChatBundle msg={msg} />
-                    })}
-                </div>
-                <div className="chat-room-send">
-                    <PiPaperclipLight size={28} />
-                    <input type="text" className='chat-room-send-input' value={message} onChange={(e) => setMessage(e.target.value)} />
-                    <AiOutlineSend size={28} onClick={send} />
-                </div>
-            </div>
+            <ChatRoom /*socket={socket}*/ reff={ref} selectedChat={selectedChat} user={user} />
+            <CreateChat isOpen={isModalOpen} onClose={handleCloseModal} user={user} />
         </div>
     )
 }

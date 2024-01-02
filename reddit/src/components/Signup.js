@@ -17,7 +17,7 @@ const Signup = () => {
     const handleSignupSubmit = async(e) => {
         e.preventDefault();
 
-        const res = await fetch('http://localhost:5000/api/auth/signup', {
+        const res = await fetch('http://192.168.29.205:5000/api/auth/signup', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

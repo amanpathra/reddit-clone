@@ -3,10 +3,11 @@ import { body, validationResult } from 'express-validator';
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import fetchuser from '../fetchuser.js'
+import Community from '../models/Community.js';
 
 const router = express.Router();
 
-router.post('/submit',
+router.post('/create',
 
     [body('community', 'Community name must be atleast 3 characters long.').isLength({ min: 3 }),
     body('title', 'Title must be alteast 5 characters long.').isLength({ min: 5 })],
@@ -19,6 +20,9 @@ router.post('/submit',
 
         try {
             const {community, title, text, flair} = req.body;
+
+            const isCommunity = await Community.findOne({name: community});
+            if (!isCommunity) return res.json({error: 'The choosen community does not exist.'})
             
             const post = new Post({
                 community, title, text, flair, user: req.user.id
@@ -37,7 +41,29 @@ router.post('/submit',
 
 router.get('/fetchAllPosts', async (req, res) => {
     try {
-        const notes = await Post.find({}).select('_id');
+        const notes = await Post.find({}).select('_id').sort({date: -1});
+        return res.json(notes);
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send('Internal server error');
+    }
+})
+
+router.get('/fetchCommunityPosts/:communityName', async (req, res) => {
+    try {
+        // console.log('cimm')
+        const notes = await Post.find({ community: req.params.communityName }).select('_id');
+        return res.json(notes);
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send('Internal server error');
+    }
+})
+
+router.get('/fetchUserPosts/:username', async (req, res) => {
+    try {
+        // console.log('cimm')
+        const notes = await Post.find({ user: req.params.username }).select('_id');
         return res.json(notes);
     } catch (error) {
         console.error(error.message);

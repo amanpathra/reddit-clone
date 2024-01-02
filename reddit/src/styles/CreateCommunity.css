@@ -1,0 +1,157 @@
+.submit {
+    display: flex;
+    justify-content: center;
+}
+
+.submit-box {
+    margin: 25px;
+    width: 60%;
+    /* background-color: rgba(238, 130, 238, 0.456); */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.submit-box h2 {
+    margin: 10px 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.submit-main {
+    background-color: white;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+}
+
+.submit-name > div {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 8px;
+    border-radius: 5px;
+    /* width: fit-content; */
+    margin-bottom: 15px;
+    border: 1px solid #dedede;
+}
+
+.submit-name svg:first-child {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.submit-name svg:nth-child(4) {
+    font-size: 20px;
+}
+
+.submit-name span:nth-child(1) {
+    font-size: 16px;
+    font-weight: 500;
+    margin-right: 2px;
+    line-height: 1;
+    color: rgb(23, 104, 185);
+    margin-bottom: 2px;
+}
+.submit-name span:nth-child(3) {
+    font-size: 0.8rem;
+    color: gray;
+    margin: 0 5px;
+}
+
+.submit-name input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    width: -webkit-fill-available;
+    height: 100%;
+    font-size: 15px;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+}
+
+.submit-frontline > div {
+    width: 100%;
+    display: flex;
+    background-color: transparent;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.submit-frontline > div > input {
+    border: none;
+    width: -webkit-fill-available;
+    outline: none;
+}
+
+.submit-frontline > div span {
+    font-size: 0.8rem;
+    color: gray;
+    margin: 0 5px;
+}
+
+.submit-frontline input:focus {
+    border-color: rgb(103, 103, 103);
+}
+
+.submit-about textarea {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-family: "Segoe UI";
+    letter-spacing: 1px;
+    resize: none;
+}
+
+.submit-about textarea:focus {
+    border-color: rgb(103, 103, 103);
+}
+
+.submit-main > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.submit-main > div > h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0;
+    color: crimson;
+}
+
+.submit-main > div > p {
+    font-size: 0.9rem;
+    color: gray;
+    margin-bottom: 0;
+}
+
+.submit-post {
+    display: flex;
+    flex-direction: row !important;
+    margin-left: auto;
+}
+
+.submit-post button {
+    padding: 8px 20px;
+    border: none;
+    outline: none;
+    border-radius: 999px;
+    background-color: #ff4500;
+    color: white;
+    font-weight: bold;
+}
+
+.submit-post button:nth-child(1){
+    border: 1px solid #ff4500;
+    background-color: white;
+    color: #ff4500;
+}

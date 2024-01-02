@@ -20,6 +20,7 @@
     align-items: center;
     color: rgb(83, 83, 83);
     cursor: pointer;
+    text-decoration: none;
 }
 
 .sidebar-section-head>*{

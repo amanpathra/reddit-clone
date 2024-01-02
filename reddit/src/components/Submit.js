@@ -16,12 +16,12 @@ const Submit = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { user } = useSelector(state => state.app)
+    const { user } = useSelector(state => state.user);
 
     const handlePostSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch('http://localhost:5000/api/post/submit', {
+        const res = await fetch('http://192.168.29.205:5000/api/post/create', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -36,8 +36,8 @@ const Submit = () => {
         });
 
         const data = await res.json();
-        dispatch(setFeedPosts({post: data}))
-        navigate('/')
+        dispatch(setFeedPosts({type: 'PUSH_POST', post: data}));
+        navigate('/');
     }
     
     return (

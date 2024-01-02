@@ -6,14 +6,14 @@ const CommentBox = ({ commentId }) => {
 
     const dispatch = useDispatch();
 
-    const { user, focusedPost } = useSelector(state => state.app);
+    const { user, focusedPost } = useSelector(state => state.user);
 
     const [comment, setComment] = useState({ text: '', markdown: false, anonymous: false });
 
     const submitComment = async (e) => {
         e.preventDefault();
         // console.log('submit func ran')
-        const res = await fetch('http://localhost:5000/api/comment/submit', {
+        const res = await fetch('http://192.168.29.205:5000/api/comment/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

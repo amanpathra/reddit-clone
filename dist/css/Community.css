@@ -1,0 +1,102 @@
+.community {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.community .community-hero {
+  width: 100%;
+  height: 45%;
+}
+.community .community-hero .community-hero-banner {
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+}
+.community .community-hero .community-hero-banner img {
+  width: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.community .community-hero .community-hero-content {
+  background-color: white;
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.community .community-hero .community-hero-content .content-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: auto;
+  height: inherit;
+}
+.community .community-hero .community-hero-content .content-header img {
+  height: 200%;
+  border-radius: 99px;
+  border: 2px solid white;
+  transform: translateY(-15%);
+}
+.community .community-hero .community-hero-content .content-header > div {
+  display: flex;
+  flex-direction: column;
+}
+.community .community-hero .community-hero-content .content-header > div > div {
+  display: flex;
+  gap: 15px;
+}
+.community .community-hero .community-hero-content .content-header > div > div h3 {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+.community .community-hero .community-hero-content .content-header > div > div button {
+  margin: 3px 0;
+  padding: 2px 20px;
+  border: 1px solid dodgerblue;
+  border-radius: 99px;
+  background: transparent;
+  color: dodgerblue;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.community .community-hero .community-hero-content .content-header > div span {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: gray;
+}
+.community .community-hero .community-hero-content .content-tab {
+  margin: auto;
+  display: flex;
+  gap: 10px;
+}
+.community .community-hero .community-hero-content .content-tab button {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  padding: 2px 8px;
+}
+.community .community-hero .community-hero-content .content-tab button::after {
+  content: "";
+  height: 4px;
+  width: 100%;
+  background-color: dodgerblue;
+  border-radius: 9px;
+  margin-top: 2px;
+}
+.community .community-feed {
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+}
+.community .community-feed .community-feed-box {
+  margin: 25px;
+  width: 60%;
+  height: -moz-fit-content;
+  height: fit-content;
+  /* background-color: rgba(238, 130, 238, 0.456); */
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}/*# sourceMappingURL=Community.css.map */

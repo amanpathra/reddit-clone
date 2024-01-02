@@ -12,13 +12,13 @@ const Nav = () => {
 
     const dispatch = useDispatch();
     
-    const { user } = useSelector(state => state.app);
+    const { user } = useSelector(state => state.user);
 
     const [searchVal, setSearchVal] = useState('');
     
     useEffect(() => {
         (async () => {
-            const resUser = await fetch('http://localhost:5000/api/auth/getUser', {
+            const resUser = await fetch('http://192.168.29.205:5000/api/auth/getUser', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
@@ -55,7 +55,7 @@ const Nav = () => {
                     <Chat sx={{ fontSize: '20px' }} />
                     <span>Chat</span>
                 </Link>
-                <Link to={'/submit'} className='nav-btn'>
+                <Link to={'/create/post'} className='nav-btn'>
                     <Add sx={{ fontSize: '20px' }} />
                     <span>Create Post</span>
                 </Link>

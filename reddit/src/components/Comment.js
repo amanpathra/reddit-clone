@@ -14,7 +14,7 @@ const Comment = ({ commentData }) => {
 
     const dispatch = useDispatch();
 
-    const { user, focusedPost } = useSelector(state => state.app);
+    const { user, focusedPost } = useSelector(state => state.user);
     const replies = focusedPost?.comments.filter(cmnt => cmnt.parent === commentData._id);
 
     const [replyBox, setReplyBox] = useState(false);
@@ -25,7 +25,7 @@ const Comment = ({ commentData }) => {
     useEffect(() =>{
         (async () =>{
             if (commentData.replies.length){
-                const res = await fetch('http://localhost:5000/api/comment/getReplies', {
+                const res = await fetch('http://192.168.29.205:5000/api/comment/getReplies', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const Comment = ({ commentData }) => {
         dispatch(setFocusedPost({ type: 'UPDATE_COMMENTS_VOTES', vote, commentId: commentData._id, isCommentVoted }))
         setCommentsLikes(state => state + creament)
 
-        await fetch(`http://localhost:5000/api/comment/vote/${commentData._id}`, {
+        await fetch(`http://192.168.29.205:5000/api/comment/vote/${commentData._id}`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",

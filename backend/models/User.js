@@ -15,10 +15,6 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    date: {
-        type: Date,
-        default: Date.now
-    },
     image: {
         type: String,
         default: 'https://www.redditstatic.com/avatars/avatar_default_02_0079D3.png'
@@ -38,6 +34,16 @@ const UserSchema = new Schema({
     myPosts: {
         type: Array,
         default: []
+    },
+    chats: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'chat'
+        }
+    ],
+    date: {
+        type: Date,
+        default: Date.now
     }
 })
 
