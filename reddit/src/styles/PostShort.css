@@ -1,0 +1,122 @@
+.profile-feed{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 60%;
+    margin: 20px;
+}
+
+.PostShort{
+    display: flex;
+    background-color: white;
+    padding: 12px;
+    gap: 12px;
+    border-radius: 5px;
+}
+
+.post-short-votes{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.post-short-votes svg{
+    color: rgb(208, 208, 208);
+    cursor: pointer;
+}
+
+.post-short-votes span{
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.post-short-post-main{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.post-short-post-head{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-short-post-head>img{
+    border-radius: 50%;
+}
+
+.post-short-post-head-subreddit{
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    color: dodgerblue;
+}
+
+.post-short-post-head-subreddit:hover{
+    text-decoration: underline;
+}
+
+.post-short-post-head-user{
+    font-size: 12px;
+    color: rgb(114, 114, 114);
+}
+
+.post-short-post-head-user>a{
+    color: rgb(0, 0, 0);
+}
+
+.post-short-post-head-user>span:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.post-short-post-content{
+    display: flex;
+    flex-direction: column;
+}
+
+.post-short-post-content h4{
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.post-short-post-content span{
+    font-size: 12px;
+    padding: 2px 8px;
+    background-color: lightgreen;
+    width: fit-content;
+    border-radius: 99px;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+}
+
+.action-buttons{
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+    gap: 25px;
+}
+
+.post-short-btn{
+    display: flex;
+    align-items: center;
+    color: rgb(85, 85, 85);
+    gap: 5px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.post-short-btn:hover{
+    background-color: #ebebeb;
+}
+
+.post-short-btn span{
+    font-size: 14px;
+    font-weight: 500;
+}

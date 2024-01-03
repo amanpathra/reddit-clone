@@ -7,6 +7,7 @@ import FeedSort from './FeedSort';
 import { formatDate } from '../middlewares/getTimeByDate';
 import { PiCakeLight } from 'react-icons/pi';
 import { IoPeopleOutline } from 'react-icons/io5';
+import PostShort from './PostShort';
 
 const Profile = () => {
 
@@ -23,13 +24,20 @@ const Profile = () => {
             const user = await res.json();
             dispatch(setProfileUser({ type: 'SET_USER', user }));
         })();
-
-        (async () => {
-            const res = await fetch(`http://192.168.29.205:5000/api/post/fetchUserPosts/${username}`);
-            const data = await res.json();
-            dispatch(setFeedPosts({ type: 'SET_POSTS', posts: data }))
-        })();
+        setFeedTab('About');
     }, [dispatch, username])
+
+    const fetchPosts = async (Tab) => {
+        const res = await fetch(`http://192.168.29.205:5000/api/post/${username}/fetch/${Tab}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": user.token,
+            }
+        })
+        const data = await res.json();
+        dispatch(setFeedPosts({ type: 'SET_POSTS', posts: data.isComments ? data.comments.map(comment => comment.post) : data.posts }))
+    }
 
     const handleTabClick = (e) => {
         e.stopPropagation();
@@ -40,6 +48,8 @@ const Profile = () => {
         })
         e.target.style.color = 'dodgerblue';
         e.target.children[0].style.backgroundColor = 'dodgerblue';
+
+        if (e.target.innerText !== 'About') fetchPosts(e.target.innerText);
     }
 
     return (
@@ -60,24 +70,15 @@ const Profile = () => {
                         </div>
                     </div>
                     <div className="content-tab">
-                        <button
-                            onClick={handleTabClick}
-                        >
-                            About
-                            <div></div>
-                        </button>
-                        <button
-                            onClick={handleTabClick}
-                        >
-                            Posts
-                            <div></div>
-                        </button>
-                        <button
-                            onClick={handleTabClick}
-                        >
-                            Comments
-                            <div></div>
-                        </button>
+                        <button onClick={handleTabClick}>About<div></div></button>
+                        <button onClick={handleTabClick}>Posts<div></div></button>
+                        {profileUser?._id === user.userData?._id && (
+                            <>
+                                <button onClick={handleTabClick}>Saved<div></div></button>
+                                <button onClick={handleTabClick}>Upvoted<div></div></button>
+                                <button onClick={handleTabClick}>Downvoted<div></div></button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
@@ -95,7 +96,7 @@ const Profile = () => {
                         <div className="wiki-section wiki-about">
                             <h4>About u/{profileUser?.username}</h4>
                             <div>
-                                    <p className='wiki-about-content'>{profileUser?.bio}</p>
+                                <p className='wiki-about-content'>{profileUser?.bio}</p>
                                 <hr />
                                 <div className="wiki-info">
                                     <div>
@@ -124,14 +125,16 @@ const Profile = () => {
                         </div>
                     </div>
                 ) : (
-                    <div>
-                        science
+                    <div className='profile-feed'>
+                        {feedPosts?.map(post => (
+                            <PostShort postId={post.id} key={post.id} />
+                        ))}
                     </div>
                 )}
 
             </div>
         </div>
     )
-}
+} 
 
 export default Profile;

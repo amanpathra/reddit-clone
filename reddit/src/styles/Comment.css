@@ -35,9 +35,15 @@
     border-radius: 50%;
 }
 
-.comment-user-profile > span {
+.comment-user-profile > a {
     font-size: 0.85rem;
     font-weight: 500;
+    text-decoration: none;
+    color: black;
+}
+
+.comment-user-profile > a:hover{
+    text-decoration: underline;
 }
 
 .comment > div:nth-child(n + 2) {

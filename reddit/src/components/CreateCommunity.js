@@ -43,7 +43,7 @@ const CreateCommunity = () => {
         <div className='submit'>
             <div className="submit-box">
                 <h2>Create a community</h2>
-                <form className="submit-main" onSubmit={handleCreateCommunity}>
+                <form className="createCommunity-main" onSubmit={handleCreateCommunity}>
                     <div className="submit-name">
                         <h3>Name</h3>
                         <p>Community names including capitalization cannot be changed.</p>

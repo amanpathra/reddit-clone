@@ -4,6 +4,7 @@ import Post from '../models/Post.js';
 import User from '../models/User.js';
 import fetchuser from '../fetchuser.js'
 import Community from '../models/Community.js';
+import Comment from '../models/Comment.js';
 
 const router = express.Router();
 
@@ -60,14 +61,35 @@ router.get('/fetchCommunityPosts/:communityName', async (req, res) => {
     }
 })
 
-router.get('/fetchUserPosts/:username', async (req, res) => {
+router.get('/:username/fetch/:tab', fetchuser, async (req, res) => {
     try {
-        // console.log('cimm')
-        const notes = await Post.find({ user: req.params.username }).select('_id');
-        return res.json(notes);
+        let posts;
+        const userId = (await User.findOne({username: req.params.username}))._id;
+        switch (req.params.tab) {
+            case 'Posts':
+                posts = await Post.find({user: userId}).select('_id').sort({date: -1});
+                break;
+
+            case 'Saved':
+                posts = (await User.findById(userId).select('savedPosts').populate('savedPosts')).savedPosts;
+                break;
+
+            case 'Upvoted':
+                posts = ((await User.findById(userId).select('votedPosts').populate('votedPosts._id')).votedPosts).filter(obj => obj.vote === 'up');
+                break;
+
+            case 'Downvoted':
+                posts = ((await User.findById(userId).select('votedPosts').populate('votedPosts')).votedPosts).filter(obj => obj.vote === 'down');
+                break;
+
+            default:
+                posts = [];
+                break;
+        }
+        res.json({posts, isComments: false});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).send('Internal server error');
+        console.error('Error fetching posts: ', error.message);
+        res.status(500).json({error: 'Internal Server Error'});
     }
 })
 

@@ -19,7 +19,7 @@ const SideBar = ({ user }) => {
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-        dispatch(setUser({ user: null }))
+        dispatch(setUser({ set:'token', token: null }))
     }
 
     return (

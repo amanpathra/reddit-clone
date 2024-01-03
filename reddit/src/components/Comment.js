@@ -9,6 +9,7 @@ import CommentBox from './CommentBox';
 import { setFocusedPost } from '../redux/store';
 
 import '../styles/Comment.css'
+import { Link } from 'react-router-dom';
 
 const Comment = ({ commentData }) => {
 
@@ -77,7 +78,7 @@ const Comment = ({ commentData }) => {
         <div className='comment comment-main'>
             <div className="comment-user-profile">
                 <img className='comment-user-profile-picture' src={commentData?.userimage} alt="" />
-                <span>{commentData?.anonymous ? '[anonymous user]' : commentData?.username}</span>
+                <Link to={`/u/${commentData?.username}`}>{commentData?.anonymous ? '[anonymous user]' : commentData?.username}</Link>
             </div>
             <div className="comment-content" dangerouslySetInnerHTML={{ __html: commentData?.markdown ? marked(commentData?.text) : commentData?.text }}/>
             <div className="comment-interactions">

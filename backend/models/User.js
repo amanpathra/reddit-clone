@@ -31,16 +31,6 @@ const UserSchema = new Schema({
         type: Array,
         default: []
     },
-    myPosts: {
-        type: Array,
-        default: []
-    },
-    chats: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'chat'
-        }
-    ],
     date: {
         type: Date,
         default: Date.now
